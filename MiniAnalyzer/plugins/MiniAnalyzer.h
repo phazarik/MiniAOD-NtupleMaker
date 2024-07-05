@@ -1,7 +1,9 @@
-//---------------------------------------------
-// Header file containing the analyzer class.
-// Call all the other header files here.
-//---------------------------------------------
+//-----------------------------------------------//
+// Header file containing the analyzer class.    //
+// Call all the other header files here.         //
+// Don't call them again in the main source file.//
+//                                  - Prachurjya //
+//-----------------------------------------------//
 
 #ifndef MINIANALYZER_H
 #define MINIANALYZER_H

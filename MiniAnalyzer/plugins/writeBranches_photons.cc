@@ -1,6 +1,10 @@
-//-----------------------
-// Prachurjya
-//-----------------------
+//----------------------------------------------//
+// This plugin is called in the header file.    //
+// No need to repeat it in the main source.     //
+// The functions are called in the main source, //
+// and must be declared in the header file.     //
+//                               - Prachurjya   //
+//----------------------------------------------//
 
 #include "MiniAnalyzer.h"
 #include "Rtypes.h"

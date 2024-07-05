@@ -12,11 +12,11 @@
 using namespace std;
 #include "MiniAnalyzer.h"
 
-// --------------------------------------------------
-// The analyzer class is declared in the header file,
-// so that it is visible to all the modules.
-// Additional features of the class are defined here.
-// --------------------------------------------------
+// ----------------------------------------------------//
+// The analyzer class is declared in the header file,  //
+// so that it is visible to all the modules.           //
+// Additional features of the class are defined here.  //
+// ----------------------------------------------------//
 
 //Constructor for setting up the tokens and the global variables:
 MiniAnalyzer::MiniAnalyzer(const edm::ParameterSet& iConfig){
@@ -30,7 +30,11 @@ MiniAnalyzer::MiniAnalyzer(const edm::ParameterSet& iConfig){
 
   //Creating the tree:
   edm::Service<TFileService> fs;
-  tree = fs->make<TTree>("Events", "EventInfo");
+  //tree = fs->make<TTree>("Events", "EventInfo");
+  TFile &rootFile = fs->file();
+  tree = new TTree("Events", "EventInfo"); //This makes sure that fs does not create any nested folder in the root file
+  rootFile.cd();
+  tree->SetDirectory(&rootFile);
 
   //Assigning branches to the tree:
   //These branches are filled in the method called for each event. 
