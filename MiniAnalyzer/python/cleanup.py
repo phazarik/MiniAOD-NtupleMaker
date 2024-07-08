@@ -2,9 +2,12 @@ import os, sys
 
 junk = [
     "*~",
+    "*/*~",
+    "../plugins/*~",
     "*#",
     "__pycache__",
-    ".root"
+    "*.root",
+    "*/.log"
 ]
 
 print("Running the following commands ...")
