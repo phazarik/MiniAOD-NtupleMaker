@@ -23,7 +23,8 @@ process.TFileService = cms.Service("TFileService", fileName = cms.string('egmNtu
 
 #Setup the parameters of the class here:
 process.flatNtupleMaker = cms.EDAnalyzer('MiniAnalyzer',
-                                         tracks         = cms.untracked.InputTag('displacedTracks'),
+                                         tracks         = cms.untracked.InputTag('displacedTracks'), #Not using this parameter in the source code.
+                                         vtxSrc         = cms.InputTag("offlineSlimmedPrimaryVertices"),
                                          genParticleSrc = cms.InputTag("prunedGenParticles"),
                                          photonSrc      = cms.InputTag("slimmedPhotons")
                                          )

@@ -8,6 +8,7 @@
 #ifndef MINIANALYZER_H
 #define MINIANALYZER_H
 
+//Default headers from the template:
 #include <memory>
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/one/EDAnalyzer.h"
@@ -59,8 +60,9 @@ private:
   void fillBranches_photons(const edm::Event&, const edm::EventSetup&);
   
   // ----------member data ---------------------------
-  // Note: all the token variables end with _
+  // Note: all the token variables end with an underscore (e.g. *Token_ or *Collection_).
   edm::EDGetTokenT<TrackCollection>            tracksToken_;
+  edm::EDGetTokenT<reco::VertexCollection>     vtxToken_;
   edm::EDGetTokenT<vector<reco::GenParticle> > genParticlesCollection_;
   edm::EDGetTokenT<edm::View<pat::Photon> >    photonCollection_;
 

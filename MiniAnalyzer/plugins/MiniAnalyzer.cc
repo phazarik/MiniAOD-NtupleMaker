@@ -12,11 +12,12 @@
 using namespace std;
 #include "MiniAnalyzer.h"
 
-// ----------------------------------------------------//
-// The analyzer class is declared in the header file,  //
-// so that it is visible to all the modules.           //
-// Additional features of the class are defined here.  //
-// ----------------------------------------------------//
+// ----------------------------------------------------------------//
+// Changes made from the EDAnalyzer template:                      //
+// The analyzer class is declared in the header file, so that      //
+// it is visible to all the additional plugins during compilation. //
+// Additional features of the class are defined here.              //
+// ----------------------------------------------------------------//
 
 //Constructor for setting up the tokens and the global variables:
 MiniAnalyzer::MiniAnalyzer(const edm::ParameterSet& iConfig){
@@ -25,9 +26,19 @@ MiniAnalyzer::MiniAnalyzer(const edm::ParameterSet& iConfig){
 #endif
   
   // Extracting parameters from the config file and setting the tokens:
+  vtxToken_ = consumes<reco::VertexCollection>(iConfig.getParameter<InputTag>("vtxSrc"));
   photonCollection_ = consumes<edm::View<pat::Photon>>(iConfig.getParameter<edm::InputTag>("photonSrc"));
   genParticlesCollection_ = consumes<std::vector<reco::GenParticle>>(iConfig.getParameter<edm::InputTag>("genParticleSrc"));
 
+  //-------------------------------------------------------------------------------------------------
+  // NOTE:
+  // Alternative way to access the collections:
+  // Define a egm::Handle object as follows:
+  // edm::Handle<reco::VertexCollection> vtxHandle; iEvent.getByToken(vtxCollection_, vtxHandle);
+  // Where, vtxHandle is the output of cosumes<>().
+  // I like using the handle in the analyze function directly, for looping over an object collection.
+  //-------------------------------------------------------------------------------------------------
+  
   //Creating the tree:
   edm::Service<TFileService> fs;
   //tree = fs->make<TTree>("Events", "EventInfo");
@@ -53,8 +64,26 @@ MiniAnalyzer::~MiniAnalyzer() {
 void MiniAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
   using namespace edm;
 
-  //Checking flags for good events that I want to keep:
+  // Put flags for rejecting bad events here.
 
+  // Setting proper vertex:
+  // P.S. Not needed, unless you want to work with vertices.
+  // This is just an example to show how objects are accessed from the input files.
+  edm::Handle<reco::VertexCollection> vtxHandle;
+  iEvent.getByToken(vtxToken_, vtxHandle);
+  reco::Vertex vtx; //Set vertex
+  math::XYZPoint pv(0, 0, 0); //reference for the vertex
+  for (vector<reco::Vertex>::const_iterator v = vtxHandle->begin(); v != vtxHandle->end(); ++v) {
+    // replace isFake() for miniAOD since it requires tracks while miniAOD vertices don't have tracks:
+    // Vertex.h: bool isFake() const {return (chi2_==0 && ndof_==0 && tracks_.empty());}
+    bool isFake = (v->chi2() == 0 && v->ndof() == 0);
+    if (!isFake) {
+      pv.SetXYZ(v->x(), v->y(), v->z());
+      vtx = *v;
+      break;
+    }
+  }
+  
   //Filling up the tree with events:
   fillBranches_photons(iEvent, iSetup); //Function defined in the photon file.
   tree->Fill();
@@ -73,6 +102,8 @@ void MiniAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 //-------------------------------//
 void MiniAnalyzer::beginJob() {
   std::cout<<"Beginning job ..."<<endl;
+  // This happens before the declaration of the class.
+  // That's why you can't declare/initialize trees/histograms here. 
 }
 
 void MiniAnalyzer::endJob() {
@@ -86,6 +117,7 @@ void MiniAnalyzer::fillDescriptions(edm::ConfigurationDescriptions& descriptions
   desc.setUnknown();
   descriptions.addDefault(desc);
 
+  //Template instructions:
   //Specify that only 'tracks' is allowed
   //To use, remove the default given above and uncomment below
   //ParameterSetDescription desc;
